@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Sales Commission Calculator</title>
+  <style>
+    /* CSS: Making it look clean and modern */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .calculator-card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 380px;
+    }
+    h2 { color: #1a202c; margin-top: 0; }
+    .subtitle { color: #718096; font-size: 14px; margin-bottom: 20px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: #2d3748; }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .progress-container {
+      background-color: #e2e8f0;
+      border-radius: 8px;
+      height: 14px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+    .progress-bar {
+      background-color: #3182ce;
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .result-box {
+      background-color: #ebf8ff;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #3182ce;
+      margin-top: 20px;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+    .total { font-weight: bold; font-size: 18px; color: #2b6cb0; border-top: 1px solid #bee3f8; padding-top: 8px; }
+  </style>
+</head>
+<body>
+
+  <!-- HTML: The input fields and display boxes -->
+  <div class="calculator-card">
+    <h2>Sales Commission Tracker</h2>
+    <p class="subtitle">Real-time quota & accelerator simulator</p>
+
+    <label for="quota">Monthly Sales Quota (₹)</label>
+    <input type="number" id="quota" value="500000" oninput="calculateCommission()">
+
+    <label for="sales">Total Closed Deals (₹)</label>
+    <input type="number" id="sales" placeholder="Enter your sales amount..." oninput="calculateCommission()">
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <small id="attainmentText" style="color: #4a5568;">Quota Attainment: 0%</small>
+
+    <div class="result-box">
+      <div class="result-row">
+        <span>Base Commission (5%):</span>
+        <span id="baseComm">₹0</span>
+      </div>
+      <div class="result-row">
+        <span>Accelerator Bonus (10%):</span>
+        <span id="bonusComm">₹0</span>
+      </div>
+      <div class="result-row total">
+        <span>Total Payout:</span>
+        <span id="totalPayout">₹0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT: The live math engine -->
+  <script>
+    function calculateCommission() {
+      // 1. Get numbers from the input boxes
+      let quota = parseFloat(document.getElementById('quota').value) || 0;
+      let sales = parseFloat(document.getElementById('sales').value) || 0;
+
+      let baseCommission = 0;
+      let bonusCommission = 0;
+
+      // 2. Calculate Tier 1 (up to quota) and Tier 2 (above quota)
+      if (sales <= quota) {
+        baseCommission = sales * 0.05;
+      } else {
+        baseCommission = quota * 0.05;
+        let extraSales = sales - quota;
+        bonusCommission = extraSales * 0.10;
+      }
+
+      let total = baseCommission + bonusCommission;
+
+      // 3. Update the numbers on the screen live
+      document.getElementById('baseComm').innerText = '₹' + baseCommission.toLocaleString('en-IN');
+      document.getElementById('bonusComm').innerText = '₹' + bonusCommission.toLocaleString('en-IN');
+      document.getElementById('totalPayout').innerText = '₹' + total.toLocaleString('en-IN');
+
+      // 4. Update the progress bar
+      let percentage = quota > 0 ? Math.min((sales / quota) * 100, 100) : 0;
+      let actualAttainment = quota > 0 ? ((sales / quota) * 100).toFixed(1) : 0;
+      
+      document.getElementById('progressBar').style.width = percentage + '%';
+      document.getElementById('attainmentText').innerText = 'Quota Attainment: ' + actualAttainment + '%';
+    }
+  </script>
+
+</body>
+</html>
